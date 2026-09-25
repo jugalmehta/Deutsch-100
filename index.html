@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deutsch in 100 Tagen: A1 to B1 German course</title>
+<meta name="description" content="A free 100-day German course from A1 to B1: 90 minutes a day, vocabulary, pronunciation, quizzes, graded assignments and progress tracking.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230F2A52'/%3E%3Cpath d='M10 44h44' stroke='%230B7A5B' stroke-width='7'/%3E%3Cpath d='M10 32h44' stroke='%23E0A100' stroke-width='7'/%3E%3Cpath d='M10 20h44' stroke='%23B4232A' stroke-width='7'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="sr" href="#app">Skip to content</a>
+
+<header class="topbar">
+  <div class="topbar-in">
+    <a class="brand" href="#/today" aria-label="Deutsch in 100 Tagen, home">
+      <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="12" fill="#0F2A52"/><path d="M10 44h44" stroke="#22B58A" stroke-width="7"/><path d="M10 32h44" stroke="#F0B429" stroke-width="7"/><path d="M10 20h44" stroke="#EF5A61" stroke-width="7"/><circle cx="22" cy="44" r="5" fill="#fff"/><circle cx="42" cy="32" r="5" fill="#fff"/><circle cx="32" cy="20" r="5" fill="#fff"/></svg>
+      <div><b>Deutsch in 100 Tagen</b><span>A1 → A2 → B1 · 90 minutes a day</span></div>
+    </a>
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#/today" data-r="today">Today</a>
+      <a href="#/roadmap" data-r="roadmap">Roadmap</a>
+      <a href="#/assignments" data-r="assignments">Assignments</a>
+      <a href="#/progress" data-r="progress">Progress</a>
+      <a href="#/resources" data-r="resources">Resources</a>
+      <a href="#/settings" data-r="settings">Settings</a>
+    </nav>
+  </div>
+  <div class="lineprog" id="lineprog" aria-hidden="true"></div>
+</header>
+
+<main id="app" tabindex="-1"><noscript><p>This course needs JavaScript to track your progress. Please enable it.</p></noscript></main>
+
+<footer>
+  Deutsch in 100 Tagen is a self-study plan. It is not affiliated with DW, Goethe-Institut, Schubert-Verlag or telc.
+  Your progress is saved only in this browser (localStorage). Export a backup in Settings.
+</footer>
+
+<div id="timerhost"></div>
+<div id="overlayhost"></div>
+<div id="toasthost" role="status" aria-live="polite"></div>
+
+<script src="js/course-data.js"></script>
+<script src="js/quizzes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
