@@ -29,35 +29,42 @@
   function modOf(n) { var d = C.days[n]; return C.modules.filter(function (m) { return m.id === d.m; })[0]; }
   function levelOf(n) { return C.levels.filter(function (l) { return n >= l.s && n <= l.e; })[0]; }
 
+  /* ---- exact-resource link helpers ---- */
+  function stripArticle(w) { return String(w || "").replace(/^(der|die|das)\s+/i, "").split(/[\/,(]/)[0].trim(); }
+  function resLink(res, label) { return res ? { label: label || ("Practice on " + res.src), url: res.url } : null; }
+  function dictLink(word) { return word ? { label: 'Look up "' + word + '" on dict.cc', url: "https://www.dict.cc/?s=" + encodeURIComponent(word) } : null; }
+  function forvoLink(word) { return word ? { label: 'Hear "' + word + '" on Forvo', url: "https://forvo.com/word/" + encodeURIComponent(word) + "/#de" } : null; }
+  function firstWord(d) { return d.v && d.v.length ? stripArticle(d.v[0][0]) : (d.p && d.p.length ? stripArticle(d.p[0][0].split(" ")[0]) : ""); }
+
   function blocksFor(n) {
     var d = dayObj(n), m = modOf(n);
     if (d.blocks) return d.blocks.map(function (b) { return { t: b.t, m: b.m, d: b.d }; });
     if (d.type === "assignment") return [
-      { t: "Review the module", m: 20, d: "Go through the vocabulary and phrases of Module " + m.id + " once more. Use the flashcards on the earlier days.", flash: "module" },
+      { t: "Review the module", m: 20, d: "Go through the vocabulary and phrases of Module " + m.id + " once more. Use the flashcards on the earlier days.", flash: "module", link: resLink(m.gramRes, "Review grammar on " + m.gramRes.src) },
       { t: "Practice quiz", m: 25, d: "Take the module quiz. You need 70% to pass; retake it as often as you like.", aid: d.aid },
       { t: "Speaking task", m: 20, d: m.speak },
       { t: "Writing task", m: 25, d: m.write }
     ];
     if (d.type === "test") return [
-      { t: "Warm-up review", m: 10, d: "Skim your mistake log and the vocabulary you got wrong most often.", flash: "level" },
+      { t: "Warm-up review", m: 10, d: "Skim your mistake log and the vocabulary you got wrong most often.", flash: "level", link: resLink(m.gramRes, "Grammar reference on " + m.gramRes.src) },
       { t: "Graded quiz", m: 30, d: "Take the graded quiz without notes. Pass mark: 60% overall.", aid: d.aid },
       { t: "Writing test", m: 25, d: "Write the task in the assignment, then score yourself with the checklist.", aid: d.aid },
       { t: "Speaking test", m: 25, d: "Record yourself, listen back, then score yourself with the checklist.", aid: d.aid }
     ];
     if (d.type === "review") return [
       { t: "Vocabulary sweep", m: 25, d: "Flashcards from the whole level. Move only words you know out of the pile.", flash: "level" },
-      { t: "Grammar recap", m: 20, d: d.c },
+      { t: "Grammar recap", m: 20, d: d.c, link: resLink(m.gramRes, "Practice on " + m.gramRes.src) },
       { t: "Fix your weak spots", m: 20, d: "Look at the practice quizzes you scored lowest on and retake them." },
       { t: "Speaking out loud", m: 15, d: "Talk for 5 minutes about yourself, your day and your plans. Record it." },
-      { t: "Listening", m: 10, d: "Watch or listen to one short DW or Slow German item and note 5 words." }
+      { t: "Listening", m: 10, d: "Watch or listen to one short clip and note 5 words.", link: resLink(m.listenRes) }
     ];
-    var prev = n > 1 ? dayObj(n - 1) : null;
+    var prev = n > 1 ? dayObj(n - 1) : null, w = firstWord(d);
     return [
       { t: "Warm-up", m: 10, d: prev && prev.v && prev.v.length ? "Review yesterday's words with the flashcards before starting." : "Say the alphabet and yesterday's phrases out loud.", flash: "prev" },
-      { t: "New vocabulary", m: 20, d: "Learn today's words with article and plural. Say each one three times, then use the flashcards.", flash: "today" },
-      { t: "Pronunciation", m: 10, d: d.s || "Read today's phrases out loud and record yourself." },
-      { t: "Learn: " + d.t, m: 20, d: d.c },
-      { t: "Listening", m: 15, d: d.l || "Listen to a short German clip and note what you understand." },
+      { t: "New vocabulary", m: 20, d: "Learn today's words with article and plural. Say each one three times, then use the flashcards.", flash: "today", link: dictLink(w) },
+      { t: "Pronunciation", m: 10, d: d.s || "Read today's phrases out loud and record yourself.", link: forvoLink(w) },
+      { t: "Learn: " + d.t, m: 20, d: d.c, link: resLink(m.gramRes, "Practice " + m.gram + " on " + m.gramRes.src) },
+      { t: "Listening", m: 15, d: d.l || "Listen to a short German clip and note what you understand.", link: resLink(m.listenRes, "Watch or listen on " + m.listenRes.src) },
       { t: "Your output", m: 15, d: d.o || "Speak or write 5 sentences using today's words." }
     ];
   }
@@ -178,6 +185,42 @@
     mic: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>'
   };
 
+  /* ---------------- Access gate ----------------
+     A simple front-door code, not real security: this is a static site with
+     no backend, so the code below is visible to anyone who reads the source.
+     It just keeps casual visitors out. */
+  var ACCESS_KEY = "deutsch100.access", ACCESS_CODE = "DeUtScH100";
+  function hasAccess() { try { return sessionStorage.getItem(ACCESS_KEY) === "1" || localStorage.getItem(ACCESS_KEY) === "1"; } catch (e) { return false; } }
+  function grantAccess(remember) { try { sessionStorage.setItem(ACCESS_KEY, "1"); if (remember) localStorage.setItem(ACCESS_KEY, "1"); } catch (e) {} }
+  function showGate() {
+    document.documentElement.classList.add("locked");
+    document.getElementById("overlayhost").innerHTML =
+      '<div class="overlay" role="dialog" aria-modal="true" aria-label="Enter access code"><div class="fc" style="max-width:420px;text-align:left">' +
+      '<h2 style="margin-top:0">Deutsch in 100 Tagen</h2>' +
+      '<p>This course is private. Email <a href="mailto:jugalmehta.d@gmail.com">jugalmehta.d@gmail.com</a> to request the access code.</p>' +
+      '<form id="gateform" novalidate><label class="sr" for="gatecode">Access code</label>' +
+      '<input id="gatecode" type="password" autocomplete="off" spellcheck="false" placeholder="Access code" ' +
+      'style="width:100%;font:inherit;font-size:18px;padding:10px 12px;border:2px solid var(--line);border-radius:var(--radius);margin:6px 0 4px;background:var(--card);color:var(--ink)">' +
+      '<div id="gateerr" class="small" style="color:var(--bad);min-height:1.3em;margin-bottom:8px"></div>' +
+      '<label class="line" style="padding:0 0 12px"><input type="checkbox" id="gateremember" checked><span class="small">Remember me on this device</span></label>' +
+      '<button class="btn" type="submit" style="width:100%;justify-content:center">Unlock course</button></form></div></div>';
+    var f = document.getElementById("gateform");
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = document.getElementById("gatecode").value;
+      if (v === ACCESS_CODE) {
+        grantAccess(document.getElementById("gateremember").checked);
+        document.documentElement.classList.remove("locked");
+        document.getElementById("overlayhost").innerHTML = "";
+        render();
+      } else {
+        document.getElementById("gateerr").textContent = "That code isn't right. Check the email from jugalmehta.d@gmail.com and try again.";
+        document.getElementById("gatecode").select();
+      }
+    });
+    document.getElementById("gatecode").focus();
+  }
+
   /* ---------------- Router ---------------- */
   var route = { name: "today" };
   function parse() {
@@ -189,6 +232,7 @@
     return { name: name };
   }
   function render() {
+    if (!hasAccess()) { showGate(); return; }
     route = parse();
     var navKey = route.name === "day" ? (route.today || route.n === currentDay() ? "today" : "roadmap") : route.name === "assignment" ? "assignments" : route.name;
     Array.prototype.forEach.call(document.querySelectorAll("#nav a"), function (a) { if (a.getAttribute("data-r") === navKey) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
@@ -244,6 +288,7 @@
       var acts = "";
       if (b.flash) acts += '<button class="btn sm ghost" data-act="flash" data-scope="' + b.flash + '">Flashcards</button>';
       if (b.aid) acts += '<a class="btn sm ghost" href="#/assignment/' + b.aid + '">Open assignment</a>';
+      if (b.link) acts += '<a class="btn sm ghost" href="' + h(b.link.url) + '" target="_blank" rel="noopener">' + h(b.link.label) + ' →</a>';
       return '<div class="block' + (on ? " done" : "") + '"><input class="chk" type="checkbox" data-k="' + k + '" id="b' + i + '"' + (on ? " checked" : "") + ' aria-label="Mark done: ' + h(b.t) + '">' +
         '<h3><label for="b' + i + '">' + h(b.t) + '</label></h3><span class="mins">' + b.m + " min</span><p>" + h(b.d) + "</p>" + (acts ? '<div class="acts">' + acts + "</div>" : "") + "</div>";
     }).join("");

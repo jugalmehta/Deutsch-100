@@ -751,8 +751,10 @@
   var RES = [
     { id: "dw-overview", cat: "Video courses", title: "DW Learn German: course overview", url: "https://learngerman.dw.com/en/overview", src: "Deutsche Welle",
       desc: "Free courses from A1 to C1. Change the interface language at the top of the page.", lv: ["A1", "A2", "B1"] },
-    { id: "dw-nicos", cat: "Video courses", title: "Nicos Weg: full video course A1 to B1", url: "https://learngerman.dw.com/de/nicos-weg/c-36519687", src: "Deutsche Welle",
-      desc: "A story-based video course with hundreds of lessons and interactive exercises for A1 to B1.", lv: ["A1", "A2", "B1"] },
+    { id: "dw-nicos", cat: "Video courses", title: "Nicos Weg: season A1 (18 chapters)", url: "https://learngerman.dw.com/de/nicos-weg/c-36519687", src: "Deutsche Welle",
+      desc: "The A1 season of the story-based video course, with interactive exercises after every episode.", lv: ["A1"] },
+    { id: "dw-nicos-a2", cat: "Video courses", title: "Nicos Weg: season A2 (18 chapters)", url: "https://learngerman.dw.com/de/nicos-weg/c-36519709", src: "Deutsche Welle",
+      desc: "The A2 season of the story-based video course, with interactive exercises after every episode.", lv: ["A2"] },
     { id: "dw-trainer", cat: "Vocabulary", title: "Deutschtrainer A1: vocabulary and short sentences", url: "https://learngerman.dw.com/en/deutschtrainer/c-56705009", src: "Deutsche Welle",
       desc: "Short vocabulary and sentence drills for beginners.", lv: ["A1"] },
     { id: "schubert", cat: "Exercises", title: "Schubert-Verlag: free online exercises", url: "http://www.schubert-verlag.de/aufgaben/index.htm", src: "Schubert-Verlag",
@@ -802,8 +804,42 @@
   ];
 
   var DAY_RES = { A1: ["dw-nicos", "goethe-ele", "schubert", "forvo"],
-                  A2: ["dw-nicos", "schubert", "lingolia", "nachrichtenleicht"],
+                  A2: ["dw-nicos-a2", "schubert", "lingolia", "nachrichtenleicht"],
                   B1: ["dw-overview", "goethe-hub", "lingolia", "tagesschau"] };
+
+  /* ---------- Per-module resource picks (used to build exact links in each day's plan) ---------- */
+  var MOD_LINK = {
+    1:  { gram: "schubert", listen: "dw-nicos" },
+    2:  { gram: "schubert", listen: "dw-nicos" },
+    3:  { gram: "goethe-ele", listen: "dw-nicos" },
+    4:  { gram: "schubert", listen: "dw-nicos" },
+    5:  { gram: "goethe-ele", listen: "dw-nicos" },
+    6:  { gram: "schubert", listen: "dw-nicos" },
+    7:  { gram: "goethe-ele", listen: "dw-nicos" },
+    8:  { gram: "schubert", listen: "dw-nicos" },
+    9:  { gram: "lingolia", listen: "dw-nicos-a2" },
+    10: { gram: "lingolia", listen: "dw-nicos-a2" },
+    11: { gram: "lingolia", listen: "dw-nicos-a2" },
+    12: { gram: "lingolia", listen: "nachrichtenleicht" },
+    13: { gram: "mein-deutschbuch", listen: "dw-nicos-a2" },
+    14: { gram: "lingolia", listen: "deutsch-perfekt" },
+    15: { gram: "mein-deutschbuch", listen: "nachrichtenleicht" },
+    16: { gram: "lingolia", listen: "tagesschau" },
+    17: { gram: "lingolia", listen: "easygerman" },
+    18: { gram: "lingolia", listen: "tagesschau" },
+    19: { gram: "mein-deutschbuch", listen: "slowgerman" },
+    20: { gram: "lingolia", listen: "deutsch-perfekt" },
+    21: { gram: "mein-deutschbuch", listen: "tagesschau" },
+    22: { gram: "lingolia", listen: "nachrichtenleicht" },
+    23: { gram: "goethe-hub", listen: "tagesschau" }
+  };
+  function byId(id) { for (var i = 0; i < RES.length; i++) if (RES[i].id === id) return RES[i]; return null; }
+  MODULES.forEach(function (m) {
+    var pick = MOD_LINK[m.id];
+    if (!pick) return;
+    m.gramRes = byId(pick.gram);
+    m.listenRes = byId(pick.listen);
+  });
 
   window.COURSE = { levels: LEVELS, modules: MODULES, days: DAYS, resources: RES, dayRes: DAY_RES, total: 100, targetMinutes: 90 };
 })();

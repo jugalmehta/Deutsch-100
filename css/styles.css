@@ -339,3 +339,7 @@ textarea { min-height: 90px; resize: vertical; }
 .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 fieldset.q { min-width: 0; }
 fieldset.q legend { padding: 0; }
+
+/* ---------- Access gate ---------- */
+html.locked .topbar, html.locked main, html.locked footer, html.locked .timerbar { visibility: hidden; }
+html.locked #overlayhost .overlay { visibility: visible; }

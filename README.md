@@ -14,6 +14,16 @@ Plain HTML, CSS and JavaScript. No build step, no backend, no tracking.
 - **Progress tracking**: blocks done per day, minutes studied (timer or manual), streak, scores, B1 readiness checklist
 - **Free resources**: DW Learn German, Schubert-Verlag, Goethe-Institut and others
 
+## Access code
+
+The site asks for an access code before showing any content: **`DeUtScH100`**.
+It is a simple front-door check, not real security — this is a static site with
+no server, so the code sits in plain text in `js/app.js` and anyone who views
+the page source can read it. It stops casual visitors, not a determined one.
+Share the code by email or message; the page tells visitors to email
+`jugalmehta.d@gmail.com` to request it. Once entered, it's remembered on that
+browser (or just for that tab, if "Remember me" is unticked).
+
 ## Use it locally
 
 Open `index.html` in a browser. That is all. Progress is saved in your browser (localStorage).
